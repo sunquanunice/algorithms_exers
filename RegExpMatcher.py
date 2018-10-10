@@ -34,27 +34,11 @@ class RegExpMatcher(object):
 					# if this is the last letter in the regx, then it can valid all the strings
 					if regIdx + 1 == regN - 1: 
 						return True
+					elif self.match(''.join(srcL[idx:]), ''.join(regL[regIdx + 2:])):
+						return True
 					else:
-						firstWordFoundIdx = -1
-						for subRegIdx in range(regIdx + 2, regN):
-							if regL[subRegIdx] != '.' and regL[subRegIdx] != '*':
-								firstWordFoundIdx = subRegIdx 
-								break
-						if firstWordFoundIdx == -1:
-							return True
-						elif idx == srcN - 1:
-							return False
-						else:
-							matchWordIdx = srcL[idx:].index(regL[firstWordFoundIdx])
-							if matchWordIdx == -1:
-								return False
-							elif matchWordIdx + idx == srcN - 1 or self.match(''.join(srcL[matchWordIdx + 1:]), ''.join(regL[firstWordFoundIdx + 1:])):
-								return True
-							else:
-								temRegL = regL[firstWordFoundIdx + 1:]
-								temRegL.insert(0, '*')
-								temRegL.insert(0, '.')
-								return self.match(srcL[matchWordIdx + 1:], temRegL)
+						return self.match(''.join(srcL[idx + 1:]), ''.join(regL[regIdx:]))
+						
 				else : # if there is a letter a-z after ".", then continue
 					regIdx += 1
 			else : # this is a letter
@@ -84,7 +68,7 @@ if __name__ == "__main__" :
 	RegExpMatcher().process('aa', 'a')
 	RegExpMatcher().process('ab', '.*')
 	RegExpMatcher().process('aab', 'c*a*b')
-	RegExpMatcher().process('mississppi', 'mis*is*p*.')
+	RegExpMatcher().process('mississippi', 'mis*is.*.......*.*p*.')
 	RegExpMatcher().process('aaa', 'a*a')
 	RegExpMatcher().match('absxassaa', '.*s.a')
 
